@@ -1,8 +1,25 @@
 # Full-Tilt-Bash
-Bash scripts to quickly setup Debian/Ubuntu based distros
+Bash scripts to designed to quickly setup Debian/Ubuntu based distros.
 
-Description coming soon!
+## Completed scripts
+**These will still be updated**
+- [x] setupLinux.sh
+- [ ] setupTools.sh
+- [x] setupLAMP.sh
+- [x] trainLoop.sh
+- [ ] secureLinux.sh
 
-**THESE SCRIPTS ARE UNFINISHED**
+## setupLinux.sh
+Runs commands that should be done after a fresh install of Linux. Is still useful afterwards too. I use it on a daily bases.
 
-I just started working on these and learning bash
+## setupTools.sh
+Installs important pentesting tools
+
+## setupLAMP.sh
+Setups Apache, My-SQL, and PHP.
+
+## trainLoop.sh
+Indefinitely runs the 'sl' command. Not a serious script by any means.
+
+## secureLinux.sh
+Configures everything automatically to secure Linux. From disabling guest login, to max password attempts, as well as installing anti-virus. This is a very useful script.

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Check if 'sl' is installed, install if not
+# TODO: Check if 'sl' is installed, install if not
 
 while :
 do

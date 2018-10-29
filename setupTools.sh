@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Check for already installed
+# TODO: Check for already installed
 
 # Nmap
 echo "installing Nmap"

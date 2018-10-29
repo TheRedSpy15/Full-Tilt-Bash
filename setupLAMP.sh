@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# TODO: Check for already installed
+
 echo "installing Apache"
 apt install apache2
 

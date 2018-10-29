@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Check for already installed
 
 # Nmap

@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# TODO: Check for already installed
-
 apt-get update
 apt-get upgrade
 apt-get dist-upgrade

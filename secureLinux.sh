@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [[ `id -u` != 0 ]]; 
+then
+    echo "Must be root to run script"
+    exit
+fi
+
 echo "Enabling firewall"
 ufw enable
 
@@ -17,3 +23,9 @@ echo "DenyUsers root" >> /etc/ssh/sshd_config
 else
 echo "Root login for ssh already disabled"
 fi
+
+echo "Removing insecure protocols"
+yum erase xinetd ypserv tftp-server telnet-server rsh-server
+
+echo "Enforcing maximum password age"
+chage -M 100 root

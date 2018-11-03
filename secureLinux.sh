@@ -1,5 +1,7 @@
 #!/bin/sh
 
+## TODO: add comments to document
+
 if [[ `id -u` != 0 ]]; 
 then
     echo "Must be root to run script"
@@ -36,18 +38,22 @@ yum erase xinetd ypserv tftp-server telnet-server rsh-server
 echo "Enforcing maximum password age"
 chage -M 100 root
 
-File="/etc/modprobe.d/firewire.conf"
-if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
-then
-    echo "Disabling firewire"
-    echo "blacklist firewire-core" >> /etc/modprobe.d/firewire.conf
+File="/etc/modprobe.d/thunderbolt.conf"
+if [ -e "$File" ]; then
+    if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
+    then
+        echo "Disabling thunderbolt connections"
+        echo "blacklist thunderbolt" >> /etc/modprobe.d/thunderbolt.conf
+    fi
 fi
 
-File="/etc/modprobe.d/thunderbolt.conf"
-if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
-then
-    echo "Disabling thunderbolt connections"
-    echo "blacklist thunderbolt" >> /etc/modprobe.d/thunderbolt.conf
+File="/etc/modprobe.d/firewire.conf"
+if [ -e "$File" ]; then
+    if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
+    then
+        echo "Disabling firewire"
+        echo "blacklist firewire-core" >> /etc/modprobe.d/firewire.conf
+    fi
 fi
 
 if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+## TODO: add more checks for already applied security steps
+
 if [[ `id -u` != 0 ]]; 
 then
     echo "Must be root to run script"

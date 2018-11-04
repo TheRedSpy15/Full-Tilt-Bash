@@ -3,6 +3,7 @@
 ## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
 ## TODO: change ssh port to 2222
+## TODO: disable guest login
 
 if [ $(whoami) != "root" ]; 
 then
@@ -37,7 +38,7 @@ fi
 ## Root login
 echo "Checking if root login allowed"
 File="/etc/ssh/sshd_config"
-if grep -q 'DenyUsers root' "$File"; 
+if ! grep -q 'DenyUsers root' "$File"; 
 then
     echo "Disabling root login sshd"
     echo "DenyUsers root" >> /etc/ssh/sshd_config
@@ -45,18 +46,31 @@ else
     echo "Root login already disabled"
 fi
 
+## BUG: sed: can't read : No such file or directory
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$FIle" ## is a check within itself
+
+## SSH port
+## need check for this one as port number could be changed to something other than 22 or 2222
+## BUG: sed: can't read : No such file or directory
+echo "Checking SSH port number"
+if grep -q 'Port 22' "$File"; 
+then
+    echo "Changing SSH port to 2222"
+    sed -i 's/Port 22/Port 2222/g' "$FIle" 
+else
+    echo "SSH port already changed from default"
+fi
 
 ## Insecure protocols - need if statement
 echo "Removing insecure protocols"
 yum erase xinetd ypserv tftp-server telnet-server rsh-server
 
-## Maximum password aga - no need for if statement
+## Maximum password age - no need for if statement
 echo "Enforcing maximum password age (100 days)"
 chage -M 100 root
 
 ## Insecure IO - thunderbolt
-echo "Disabling insecure IO ports"
+echo "Checking for insecure IO ports"
 File="/etc/modprobe.d/thunderbolt.conf"
 if [ -e "$File" ]; 
 then

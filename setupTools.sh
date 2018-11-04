@@ -40,3 +40,5 @@ apt-get install reaver
 
 # Aircrack-ng
 apt-get install aircrack-ng
+
+# echo "installing Visual Studio Code"

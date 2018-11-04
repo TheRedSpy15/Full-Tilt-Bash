@@ -9,7 +9,7 @@ then
     exit
 fi
 
-## Firwall - need if statement
+## Firewall - need if statement
 echo "Enabling firewall"
 ufw enable
 

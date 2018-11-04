@@ -1,6 +1,12 @@
 #!/bin/sh
 
-# TODO: Check for already installed
+## TODO: Check for already installed
+## TODO: Install Webmin
+## TODO: Install Joomla
+## TODO: Install Wine
+## TODO: Install Clamav
+## TODO: Install Zabbix
+## TODO: Install phpipam
 
 echo "installing Apache"
 apt install apache2

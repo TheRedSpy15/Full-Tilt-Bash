@@ -4,7 +4,7 @@
 ## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
 
-if [[ `id -u` != 0 ]]; 
+if [ $(whoami) != "root" ]; 
 then
     echo "Must be root to run script"
     exit
@@ -51,8 +51,9 @@ chage -M 100 root
 
 echo "Disabling insecure IO ports"
 File="/etc/modprobe.d/thunderbolt.conf"
-if [ -e "$File" ]; then
-    if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
+if [ -e "$File" ]; 
+then
+    if ! grep -q 'blacklist thunderbolt' "$File"; 
     then
         echo "Disabling thunderbolt connections"
         echo "blacklist thunderbolt" >> /etc/modprobe.d/thunderbolt.conf
@@ -60,8 +61,9 @@ if [ -e "$File" ]; then
 fi
 
 File="/etc/modprobe.d/firewire.conf"
-if [ -e "$File" ]; then
-    if grep -q STRING_YOU_ARE_CHECKING_FOR "$File"; 
+if [ -e "$File" ]; 
+then
+    if ! grep -q 'blacklist firewire-core' "$File"; 
     then
         echo "Disabling firewire"
         echo "blacklist firewire-core" >> /etc/modprobe.d/firewire.conf

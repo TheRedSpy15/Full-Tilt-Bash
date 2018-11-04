@@ -2,7 +2,6 @@
 
 ## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
-## TODO: change ssh port to 2222
 ## TODO: disable guest login
 
 if [ $(whoami) != "root" ]; 

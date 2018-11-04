@@ -103,6 +103,8 @@ else
 fi
 
 ## Malicious domains
+## TODO: add domains from this list: https://www.malwaredomainlist.com/hostslist/hosts.txt
+## but with 0.0.0.0 instead of 127.0.0.1
 echo "Black-listing malicious domains"
 File="/etc/hosts"
 if ! grep -q 'totalvirus.com' "$File"; 

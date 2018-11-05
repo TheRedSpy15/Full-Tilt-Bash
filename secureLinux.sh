@@ -4,6 +4,10 @@
 ## TODO: remove untrustworthy ca certificates
 ## TODO: disable guest login
 ## TODO: make sure automatic updates are enabled
+## TODO: disable ssh v1
+## TODO: limit ssh connections through firewall
+## TODO: add openssh support
+## TODO: review steps that modify system files
 
 if [ $(whoami) != "root" ]; 
 then

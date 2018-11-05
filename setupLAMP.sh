@@ -8,6 +8,12 @@
 ## TODO: Install Zabbix
 ## TODO: Install phpipam
 
+if [ $(whoami) != "root" ]; 
+then
+    echo "Must be root to run script"
+    exit
+fi
+
 echo "installing Apache"
 apt install apache2
 

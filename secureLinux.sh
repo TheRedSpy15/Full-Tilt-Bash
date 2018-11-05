@@ -3,6 +3,7 @@
 ## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
 ## TODO: disable guest login
+## TODO: make sure automatic updates are enabled
 
 if [ $(whoami) != "root" ]; 
 then

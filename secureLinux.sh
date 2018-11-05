@@ -5,7 +5,6 @@
 ## TODO: disable guest login
 ## TODO: make sure automatic updates are enabled
 ## TODO: disable ssh v1
-## TODO: limit ssh connections through firewall
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
 
@@ -18,6 +17,10 @@ fi
 ## Firewall - need if statement
 echo "Enabling firewall"
 ufw enable
+
+echo "Limiting ssh connections"
+ufw limit ssh
+ufw limit openssh
 
 ## Clamav
 echo "Checking for clamav"

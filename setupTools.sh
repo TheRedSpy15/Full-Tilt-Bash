@@ -48,3 +48,7 @@ apt-get install reaver
 apt-get install aircrack-ng
 
 ## echo "installing Visual Studio Code"
+
+## Fsociety
+echo "installing fsociety"
+bash <(wget -qO- https://git.io/vAtmB)

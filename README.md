@@ -13,13 +13,13 @@ Bash scripts to designed to quickly setup Debian/Ubuntu based distros.
 Runs commands that should be done after a fresh install of Linux. Is still useful afterwards too. I use it on a daily bases.
 
 ## setupTools.sh
-Installs important pentesting tools
+Installs a large arsenal of pentesting tools, that every pentester should have.
 
 ## setupLAMP.sh
-Setups Apache, My-SQL, and PHP.
+Setups Apache, My-SQL, and PHP. Will also install a few other useful programs for maintaining a server.
 
 ## trainLoop.sh
 Indefinitely runs the 'sl' command. Not a serious script by any means.
 
 ## secureLinux.sh
-Configures everything automatically to secure Linux. From disabling guest login, to max password attempts, as well as installing anti-virus. This is a very useful script.
+Configures everything automatically to secure Linux, as well as installing a suite of system defense tools.

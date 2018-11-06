@@ -4,7 +4,6 @@
 ## TODO: Install Webmin
 ## TODO: Install Joomla
 ## TODO: Install Wine
-## TODO: Install Clamav
 ## TODO: Install Zabbix
 ## TODO: Install phpipam
 

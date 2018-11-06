@@ -8,7 +8,6 @@
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
 
-
 ## Root/sudo check
 if [ $(whoami) != "root" ]; 
 then

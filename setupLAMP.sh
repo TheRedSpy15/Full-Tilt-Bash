@@ -15,6 +15,16 @@ then
     exit
 fi
 
+## Clamav
+echo "Checking for clamav"
+if [ $(dpkg-query -W -f='${Status}' clamav 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+    echo "Installing anti-virus"
+    apt-get install clamav
+else
+    echo "Clamav already installed"
+fi
+
 ## Apache
 echo "Checking for Apache"
 if [ $(dpkg-query -W -f='${Status}' apache2 2>/dev/null | grep -c "ok installed") -eq 0 ];

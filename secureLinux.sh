@@ -24,7 +24,7 @@ echo "Limiting ssh connections"
 ufw limit ssh
 ufw limit openssh
 
-## Automatic updates  need to verify if works
+## Automatic updates
 echo "Enforcing automatic updates"
 sed -i 's/Update-Package-Lists "0"/Update-Package-Lists "1"/g' /etc/apt/apt.conf.d/20auto-upgrades
 

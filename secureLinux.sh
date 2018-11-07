@@ -3,10 +3,10 @@
 ## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
 ## TODO: disable guest login
-## TODO: make sure automatic updates are enabled
 ## TODO: disable ssh v1
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
+## TODO: limit to only one instance
 
 ## Root/sudo check
 if [ $(whoami) != "root" ]; 
@@ -19,9 +19,14 @@ fi
 echo "Enabling firewall"
 ufw enable
 
+## Limit SSH connections
 echo "Limiting ssh connections"
 ufw limit ssh
 ufw limit openssh
+
+## Automatic updates  need to verify if works
+echo "Enforcing automatic updates"
+sed -i 's/Update-Package-Lists "0"/Update-Package-Lists "1"/g' /etc/apt/apt.conf.d/20auto-upgrades
 
 ## Clamav
 echo "Checking for clamav"
@@ -56,7 +61,7 @@ fi
 
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config ## is a check within itself
 
-## SSH port - review a default sshd_config, might need to uncomment port number
+## SSH port - review as default sshd_config might need to uncomment port number
 ## need check for this one as port number could be already changed to something other than 22 or 3333
 echo "Checking SSH port number"
 if grep -q 'Port 22' "$File"; 

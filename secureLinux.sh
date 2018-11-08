@@ -45,17 +45,15 @@ else
     echo "Root login already disabled"
 fi
 
-## BUG: sed: can't read : No such file or directory
-sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$FIle" ## is a check within itself
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config ## is a check within itself
 
-## SSH port
-## need check for this one as port number could be changed to something other than 22 or 2222
-## BUG: sed: can't read : No such file or directory
+## SSH port - review a default sshd_config, might need to uncomment port number
+## need check for this one as port number could be already changed to something other than 22 or 3333
 echo "Checking SSH port number"
 if grep -q 'Port 22' "$File"; 
 then
-    echo "Changing SSH port to 2222"
-    sed -i 's/Port 22/Port 2222/g' "$FIle" 
+    echo "Changing SSH port to 3333"
+    sed -i 's/Port 22/Port 3333/g' /etc/ssh/sshd_config 
 else
     echo "SSH port already changed from default"
 fi

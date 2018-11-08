@@ -23,7 +23,7 @@ apt-get autoremove
 apt-get autoclean
 apt-get check
 
-## Firewall - need if statement
+## Firewall
 echo "Enabling firewall"
 ufw enable
 

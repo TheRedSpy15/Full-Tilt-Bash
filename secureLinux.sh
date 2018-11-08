@@ -1,6 +1,5 @@
 #!/bin/sh
 
-## TODO: finish blacklisted domains
 ## TODO: remove untrustworthy ca certificates
 ## TODO: disable guest login
 ## TODO: disable ssh v1
@@ -121,13 +120,12 @@ else
     echo "fail2ban already installed"
 fi
 
-## Malicious domains
-## TODO: add domains from this list: https://www.malwaredomainlist.com/hostslist/hosts.txt
-## but with 0.0.0.0 instead of 127.0.0.1
+## Malicious domains - need to check for hosts.txt and download if it does not exists
 echo "Black-listing malicious domains"
 File="/etc/hosts"
-if ! grep -q 'totalvirus.com' "$File"; 
+if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
 then
-    echo 'Black-listing "totalvirus.com"'
-    echo "0.0.0.0 totalvirus.com" >> /etc/hosts
+    cat hosts.txt >> /etc/hosts
+else
+    echo "Malicious hosts already blocked"
 fi

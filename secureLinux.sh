@@ -136,7 +136,7 @@ fi
 ## Malicious domains
 echo "Black-listing malicious domains"
 File="hosts.txt"
-if [ -e "$File" ]; 
+if [ -e "$File" ]; ## hosts.txt check if exists
 then
     File="/etc/hosts"
     if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
@@ -145,7 +145,7 @@ then
     else
         echo "Malicious domains already blocked"
     fi
-else
+else ## hosts.txt missing then download
     echo "Hosts file missing... Downloading"
     wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
 

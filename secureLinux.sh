@@ -127,5 +127,5 @@ if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File
 then
     cat hosts.txt >> /etc/hosts
 else
-    echo "Malicious hosts already blocked"
+    echo "Malicious domains already blocked"
 fi

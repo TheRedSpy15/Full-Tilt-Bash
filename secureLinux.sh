@@ -6,6 +6,7 @@
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
 ## TODO: limit to only one instance
+## TODO: disable compilers option
 
 ## Root/sudo check
 if [ $(whoami) != "root" ]; 
@@ -55,6 +56,18 @@ else
     echo "rkhunter already installed"
 fi
 
+## auditd
+echo "Checking for auditd"
+if [ $(dpkg-query -W -f='${Status}' auditd 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+    echo "Installing auditd"
+    apt-get install auditd
+    auditd -s enable
+else
+    echo "auditd already installed"
+    auditd -s enable ## enforce it to be enabled
+fi
+
 ## Root login
 echo "Checking if root login allowed"
 File="/etc/ssh/sshd_config"
@@ -81,7 +94,7 @@ fi
 
 ## Insecure protocols - need if statement
 echo "Removing insecure protocols"
-yum erase xinetd ypserv tftp-server telnet-server rsh-server
+yum erase xinetd ypserv tftp-server telnet-server rsh-server dccp sctp rds tipc
 
 ## Maximum password age - no need for if statement
 echo "Enforcing maximum password age (100 days)"

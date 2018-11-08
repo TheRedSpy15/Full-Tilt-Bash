@@ -133,12 +133,27 @@ else
     echo "fail2ban already installed"
 fi
 
-## Malicious domains - need to check for hosts.txt and download if it does not exists
+## Malicious domains
 echo "Black-listing malicious domains"
-File="/etc/hosts"
-if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+File="hosts.txt"
+if [ -e "$File" ]; 
 then
-    cat hosts.txt >> /etc/hosts
+    File="/etc/hosts"
+    if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+    then
+        cat hosts.txt >> /etc/hosts
+    else
+        echo "Malicious domains already blocked"
+    fi
 else
-    echo "Malicious domains already blocked"
+    echo "Hosts file missing... Downloading"
+    wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
+
+    File="/etc/hosts"
+    if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+    then
+        cat hosts.txt >> /etc/hosts
+    else
+        echo "Malicious domains already blocked"
+    fi
 fi

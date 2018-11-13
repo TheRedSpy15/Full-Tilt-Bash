@@ -7,8 +7,7 @@
 ## TODO: review steps that modify system files
 ## TODO: limit to only one instance
 ## TODO: disable compilers option
-## TODO: yes or no to run each step
-## TODO: and a bunch of steps to secure GRUB
+## TODO: add a bunch of steps to secure GRUB
 ## TODO: check for home directory encryption
 
 PUR='\033[0;35m' ## Purple
@@ -163,25 +162,31 @@ secure_hardware(){
     echo "${PUR}*** Securing hardware access ***${NC}"
 
     ## Insecure IO - thunderbolt
-    echo "Checking for insecure IO ports"
-    File="/etc/modprobe.d/thunderbolt.conf"
-    if [ -e "$File" ]; 
-    then
-        if ! grep -q 'blacklist thunderbolt' "$File"; 
+    read -p "Would you like to check for thunderbolt access (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for insecure IO ports"
+        File="/etc/modprobe.d/thunderbolt.conf"
+        if [ -e "$File" ]; 
         then
-            echo "Disabling thunderbolt connections"
-            echo "blacklist thunderbolt" >> /etc/modprobe.d/thunderbolt.conf
+            if ! grep -q 'blacklist thunderbolt' "$File"; 
+            then
+                echo "Disabling thunderbolt connections"
+                echo "blacklist thunderbolt" >> /etc/modprobe.d/thunderbolt.conf
+            fi
         fi
     fi
 
     ## Insecure IO - firewire
-    File="/etc/modprobe.d/firewire.conf"
-    if [ -e "$File" ]; 
-    then
-        if ! grep -q 'blacklist firewire-core' "$File"; 
+    read -p "Would you like to check for firewire access (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        File="/etc/modprobe.d/firewire.conf"
+        if [ -e "$File" ]; 
         then
-            echo "Disabling firewire"
-            echo "blacklist firewire-core" >> /etc/modprobe.d/firewire.conf
+            if ! grep -q 'blacklist firewire-core' "$File"; 
+            then
+                echo "Disabling firewire"
+                echo "blacklist firewire-core" >> /etc/modprobe.d/firewire.conf
+            fi
         fi
     fi
 }
@@ -190,65 +195,81 @@ secure_connections(){
     echo "${PUR}*** Securing connections ***${NC}"
 
     ## Firewall
-    echo "Enforcing firewall"
-    ufw enable
+    read -p "Would you like to enforce the firewall to be enabled (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Enforcing firewall"
+        ufw enable
+    fi
 
     ## Insecure protocols - need if statement
-    echo "Removing insecure protocols"
-    yum erase xinetd ypserv tftp-server telnet-server rsh-server dccp sctp rds tipc
+    read -p "Would you like to remove insecure protocols (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Removing insecure protocols"
+        yum erase xinetd ypserv tftp-server telnet-server rsh-server dccp sctp rds tipc
+    fi
 
     ## psad - need to 'noemail' with context
-    echo "Checking for psad"
-    if [ $(dpkg-query -W -f='${Status}' psad 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing psad"
-        apt-get install psad
-
-        sudo iptables -A INPUT -j LOG
-        sudo iptables -A FORWARD -j LOG
-
-        ## Make iptables rules persistent
-        if [ $(dpkg-query -W -f='${Status}' iptables-persistent 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    read -p "Would you like to check for psad (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for psad"
+        if [ $(dpkg-query -W -f='${Status}' psad 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
-            echo "Enforcing persistent iptables rules"
+            echo "Installing psad"
+            apt-get install psad
 
-            apt-get install iptables-persistent
-            service iptables-persistent start
+            sudo iptables -A INPUT -j LOG
+            sudo iptables -A FORWARD -j LOG
+
+            ## Make iptables rules persistent
+            if [ $(dpkg-query -W -f='${Status}' iptables-persistent 2>/dev/null | grep -c "ok installed") -eq 0 ];
+            then
+                echo "Enforcing persistent iptables rules"
+
+                apt-get install iptables-persistent
+                service iptables-persistent start
+            fi
+
+            echo "Configuring psad settings"
+            sed -i s/_CHANGEME_/$(whoami)/g /etc/psad/psad.conf ## Hostname
+            sed -i s/ALERTING_METHODS            ALL/$(whoami)/g /etc/psad/psad.conf ## Alerting method
+        else
+            echo "psad already installed"
+            echo "Updating psad"
+            
+            psad --sig-update
+            psad -H
         fi
-
-        echo "Configuring psad settings"
-        sed -i s/_CHANGEME_/$(whoami)/g /etc/psad/psad.conf ## Hostname
-        sed -i s/ALERTING_METHODS            ALL/$(whoami)/g /etc/psad/psad.conf ## Alerting method
-    else
-        echo "psad already installed"
-        echo "Updating psad"
-        
-        psad --sig-update
-        psad -H
     fi
 
     ## Malicious domains
-    echo "Black-listing malicious domains"
-    File="hosts.txt"
-    if [ -e "$File" ]; ## hosts.txt check if exists
-    then
-        File="/etc/hosts"
-        if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+    read -p "Would you like to block malicious domains (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Black-listing malicious domains"
+        File="hosts.txt"
+        if [ -e "$File" ]; ## hosts.txt check if exists
         then
-            cat hosts.txt >> /etc/hosts
-        else
-            echo "Malicious domains already blocked"
-        fi
-    else ## hosts.txt missing then download
-        echo "Hosts file missing... Downloading"
-        wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
+            File="/etc/hosts"
+            if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+            then
+                cat hosts.txt >> /etc/hosts
+            else
+                echo "Malicious domains already blocked"
+            fi
+        else ## hosts.txt missing then download
+            read -p "Host file missing. Would you like to download it (y/n)?" CONT
+            if [ "$CONT" = "y" ]; then
+                wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
 
-        File="/etc/hosts"
-        if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
-        then
-            cat hosts.txt >> /etc/hosts
-        else
-            echo "Malicious domains already blocked"
+                File="/etc/hosts"
+                if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+                then
+                    cat hosts.txt >> /etc/hosts
+                else
+                    echo "Malicious domains already blocked"
+                fi
+            else
+                echo "Resuming"
+            fi
         fi
     fi
 }
@@ -257,42 +278,54 @@ secure_ssh(){
     echo "${PUR}*** Securing SSH ***${NC}"
 
     ## Limit SSH connections
-    echo "Limiting ssh connections"
-    ufw limit ssh
-    ufw limit openssh
-
-    ## Root login
-    echo "Checking if root login allowed"
-    File="/etc/ssh/sshd_config"
-    if ! grep -q 'DenyUsers root' "$File"; 
-    then
-        echo "Disabling root login sshd"
-        echo "DenyUsers root" >> /etc/ssh/sshd_config
-    else
-        echo "Root login already disabled"
+    read -p "Would you like to limit SSH connections (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Limiting ssh connections"
+        ufw limit ssh
+        ufw limit openssh
     fi
 
-    sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config ## is a check within itself
+    ## Root login
+    read -p "Would you like to disable SSH root login (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking if root login allowed"
+        File="/etc/ssh/sshd_config"
+        if ! grep -q 'DenyUsers root' "$File"; 
+        then
+            echo "Disabling root login sshd"
+            echo "DenyUsers root" >> /etc/ssh/sshd_config
+        else
+            echo "Root login already disabled"
+        fi
+
+        sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config ## is a check within itself
+    fi
 
     ## SSH port - review as default sshd_config might need to uncomment port number
     ## need check for this one as port number could be already changed to something other than 22 or 3333
-    echo "Checking SSH port number"
-    if grep -q 'Port 22' "$File"; 
-    then
-        echo "Changing SSH port to 3333"
-        sed -i 's/Port 22/Port 3333/g' /etc/ssh/sshd_config 
-    else
-        echo "SSH port already changed from default"
+    read -p "Would you like to change ssh port from default (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking SSH port number"
+        if grep -q 'Port 22' "$File"; 
+        then
+            echo "Changing SSH port to 3333"
+            sed -i 's/Port 22/Port 3333/g' /etc/ssh/sshd_config 
+        else
+            echo "SSH port already changed from default"
+        fi
     fi
 
     ## fail2ban
-    echo "Checking for fail2ban"
-    if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing fail2ban"
-        sudo apt-get install fail2ban
-    else
-        echo "fail2ban already installed"
+    read -p "Would you like to check for fail2ban (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for fail2ban"
+        if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            echo "Installing fail2ban"
+            sudo apt-get install fail2ban
+        else
+            echo "fail2ban already installed"
+        fi
     fi
 }
 
@@ -300,8 +333,11 @@ secure_user(){
     echo "${PUR}*** Securing user ***${NC}"
 
     ## Maximum password age - no need for if statement
-    echo "Enforcing maximum password age (100 days)"
-    chage -M 100 root
+    read -p "Would you like to limit password age to 100 days (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Enforcing maximum password age (100 days)"
+        chage -M 100 root
+    fi
 }
 
 sudo_check

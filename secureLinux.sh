@@ -52,34 +52,6 @@ sudo_check(){
     fi
 }
 
-install_scanners(){
-    echo "${PUR}*** Installing scanners ***${NC}"
-
-    ## Clamav
-    echo "Checking for clamav"
-    if [ $(dpkg-query -W -f='${Status}' clamav 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing anti-virus"
-        apt-get install clamav
-    else
-        echo "Clamav already installed"
-    fi
-
-    ## rkhunter
-    echo "Checking for rkhunter"
-    if [ $(dpkg-query -W -f='${Status}' rkhunter 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing anti-rootkit"
-        sudo apt-get install rkhunter
-    else
-        echo "rkhunter already installed"
-        echo "updating rkhunter"
-
-        rkhunter --update
-        rkhunter --versioncheck
-    fi
-}
-
 secure_system(){
     echo "${PUR}*** Securing system ***${NC}"
 
@@ -164,7 +136,6 @@ secure_hardware(){
     ## Insecure IO - thunderbolt
     read -p "Would you like to check for thunderbolt access (y/n)?" CONT
     if [ "$CONT" = "y" ]; then
-        echo "Checking for insecure IO ports"
         File="/etc/modprobe.d/thunderbolt.conf"
         if [ -e "$File" ]; 
         then
@@ -350,4 +321,3 @@ secure_connections
 secure_ssh
 secure_hardware
 secure_user
-install_scanners

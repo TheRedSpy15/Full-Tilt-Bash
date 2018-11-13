@@ -102,8 +102,19 @@ secure_system(){
     then
         echo "Installing anti-virus"
         apt-get install clamav
+
+        echo "Running scan (Clamav)"
+        clamscan -r --bell -i /
     else
         echo "Clamav already installed"
+
+        echo "Updating database (Clamav)"
+        /etc/init.d/clamav-freshclam stop ## stop auto-updater so we can update manually
+        freshclam
+        sudo /etc/init.d/clamav-freshclam start ## restarting auto-updater
+
+        echo "Running scan (Clamav)"
+        clamscan -r --bell -i /
     fi
 
     ## rkhunter
@@ -112,12 +123,18 @@ secure_system(){
     then
         echo "Installing anti-rootkit"
         sudo apt-get install rkhunter
+
+        echo "Running scan (rkhunter)"
+        rkhunter --check
     else
         echo "rkhunter already installed"
-        echo "updating rkhunter"
 
+        echo "updating rkhunter"
         rkhunter --update
         rkhunter --versioncheck
+
+        echo "Running scan (rkhunter)"
+        rkhunter --check
     fi
 }
 

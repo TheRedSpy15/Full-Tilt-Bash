@@ -130,23 +130,32 @@ secure_system(){
     fi
 
     ## rkhunter
-    echo "Checking for rkhunter"
-    if [ $(dpkg-query -W -f='${Status}' rkhunter 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing anti-rootkit"
-        sudo apt-get install rkhunter
+    read -p "Would you like to check for rkhunter (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for rkhunter"
+        if [ $(dpkg-query -W -f='${Status}' rkhunter 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            echo "Installing anti-rootkit"
+            sudo apt-get install rkhunter
 
-        echo "Running scan (rkhunter)"
-        rkhunter --check
-    else
-        echo "rkhunter already installed"
+            read -p "Would you like to run a scan now (y/n)?" CONT
+            if [ "$CONT" = "y" ]; then
+                echo "Running scan (rkhunter)"
+                rkhunter --check
+            fi
+        else
+            echo "rkhunter already installed"
 
-        echo "updating rkhunter"
-        rkhunter --update
-        rkhunter --versioncheck
+            echo "updating rkhunter"
+            rkhunter --update
+            rkhunter --versioncheck
 
-        echo "Running scan (rkhunter)"
-        rkhunter --check
+            read -p "Would you like to run a scan now (y/n)?" CONT
+            if [ "$CONT" = "y" ]; then
+                echo "Running scan (rkhunter)"
+                rkhunter --check
+            fi
+        fi
     fi
 }
 

@@ -11,11 +11,11 @@
 ## TODO: and a bunch of steps to secure GRUB
 ## TODO: check for home directory encryption
 
-RED='\033[0;31m' ## Red
+PUR='\033[0;35m' ## Purple
 NC='\033[0m' ## No Color
 
 update(){
-    echo "${RED}*** Updating system ***${NC}"
+    echo "${PUR}*** Updating system ***${NC}"
 
     ## Full system update - need a way to check for apt-fast
     echo "Checking for apt-fast (faster)"
@@ -48,13 +48,13 @@ sudo_check(){
     ## Root/sudo check
     if [ $(whoami) != "root" ]; 
     then
-        echo "${RED}Must be root to run script"
+        echo "${PUR}Must be root to run script"
         exit
     fi
 }
 
 install_scanners(){
-    echo "${RED}*** Installing scanners ***${NC}"
+    echo "${PUR}*** Installing scanners ***${NC}"
 
     ## Clamav
     echo "Checking for clamav"
@@ -82,7 +82,7 @@ install_scanners(){
 }
 
 secure_system(){
-    echo "${RED}*** Securing system ***${NC}"
+    echo "${PUR}*** Securing system ***${NC}"
 
     ## auditd
     read -p "Would you like to check for auditd (y/n)?" CONT
@@ -151,7 +151,7 @@ secure_system(){
 }
 
 secure_hardware(){
-    echo "${RED}*** Securing hardware access ***${NC}"
+    echo "${PUR}*** Securing hardware access ***${NC}"
 
     ## Insecure IO - thunderbolt
     echo "Checking for insecure IO ports"
@@ -178,7 +178,7 @@ secure_hardware(){
 }
 
 secure_connections(){
-    echo "${RED}*** Securing connections ***${NC}"
+    echo "${PUR}*** Securing connections ***${NC}"
 
     ## Firewall
     echo "Enforcing firewall"
@@ -245,7 +245,7 @@ secure_connections(){
 }
 
 secure_ssh(){
-    echo "${RED}*** Securing SSH ***${NC}"
+    echo "${PUR}*** Securing SSH ***${NC}"
 
     ## Limit SSH connections
     echo "Limiting ssh connections"
@@ -288,7 +288,7 @@ secure_ssh(){
 }
 
 secure_user(){
-    echo "${RED}*** Securing user ***${NC}"
+    echo "${PUR}*** Securing user ***${NC}"
 
     ## Maximum password age - no need for if statement
     echo "Enforcing maximum password age (100 days)"

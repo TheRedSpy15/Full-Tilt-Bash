@@ -85,36 +85,48 @@ secure_system(){
     echo "${RED}*** Securing system ***${NC}"
 
     ## auditd
-    echo "Checking for auditd"
-    if [ $(dpkg-query -W -f='${Status}' auditd 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing auditd"
-        apt-get install auditd
-        auditd -s enable
-    else
-        echo "auditd already installed"
-        auditd -s enable ## enforce it to be enabled
+    read -p "Would you like to check for auditd (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for auditd"
+        if [ $(dpkg-query -W -f='${Status}' auditd 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            echo "Installing auditd"
+            apt-get install auditd
+            auditd -s enable
+        else
+            echo "auditd already installed"
+            auditd -s enable ## enforce it to be enabled
+        fi
     fi
 
     ## Clamav
-    echo "Checking for clamav"
-    if [ $(dpkg-query -W -f='${Status}' clamav 2>/dev/null | grep -c "ok installed") -eq 0 ];
-    then
-        echo "Installing anti-virus"
-        apt-get install clamav
+    read -p "Would you like to check for clamav (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Checking for clamav"
+        if [ $(dpkg-query -W -f='${Status}' clamav 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            echo "Installing anti-virus"
+            apt-get install clamav
 
-        echo "Running scan (Clamav)"
-        clamscan -r --bell -i /
-    else
-        echo "Clamav already installed"
+            read -p "Would you like to run a scan now (y/n)?" CONT
+            if [ "$CONT" = "y" ]; then
+                echo "Running scan (Clamav)"
+                clamscan -r --bell -i /
+            fi
+        else
+            echo "Clamav already installed"
 
-        echo "Updating database (Clamav)"
-        /etc/init.d/clamav-freshclam stop ## stop auto-updater so we can update manually
-        freshclam
-        sudo /etc/init.d/clamav-freshclam start ## restarting auto-updater
+            echo "Updating database (Clamav)"
+            /etc/init.d/clamav-freshclam stop ## stop auto-updater so we can update manually
+            freshclam
+            sudo /etc/init.d/clamav-freshclam start ## restarting auto-updater
 
-        echo "Running scan (Clamav)"
-        clamscan -r --bell -i /
+            read -p "Would you like to run a scan now (y/n)?" CONT
+            if [ "$CONT" = "y" ]; then
+                echo "Running scan (Clamav)"
+                clamscan -r --bell -i /
+            fi
+        fi
     fi
 
     ## rkhunter
@@ -284,7 +296,10 @@ secure_user(){
 }
 
 sudo_check
-update
+read -p "Would you like to completely update now (y/n)?" CONT
+if [ "$CONT" = "y" ]; then
+    update
+fi
 secure_system
 secure_connections
 secure_ssh

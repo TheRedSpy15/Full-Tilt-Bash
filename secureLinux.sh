@@ -6,7 +6,9 @@
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
 ## TODO: limit to only one instance
-## TODO: add a bunch of steps to secure GRUB
+## TODO: password protect GRUB
+## TODO: disable ipv6
+## TODO: disable ctrl alt del
 ## TODO: check for home directory encryption
 
 PUR='\033[0;35m' ## Purple
@@ -319,9 +321,9 @@ secure_user(){
     echo "${PUR}*** Securing user ***${NC}"
 
     ## Maximum password age - no need for if statement
-    read -p "Would you like to limit password age to 100 days (y/n)?" CONT
+    read -p "Would you like to limit password age to 100 days for root (y/n)?" CONT
     if [ "$CONT" = "y" ]; then
-        echo "Enforcing maximum password age (100 days)"
+        echo "Enforcing maximum password age of root (100 days)"
         chage -M 100 root
     fi
 }

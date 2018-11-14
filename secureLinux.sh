@@ -6,7 +6,6 @@
 ## TODO: add openssh support
 ## TODO: review steps that modify system files
 ## TODO: limit to only one instance
-## TODO: disable compilers option
 ## TODO: add a bunch of steps to secure GRUB
 ## TODO: check for home directory encryption
 
@@ -127,6 +126,22 @@ secure_system(){
                 rkhunter --check
             fi
         fi
+    fi
+
+    ## Compilers
+    read -p "Would you like to disable compilers (y/n)?" CONT
+    if [ "$CONT" = "y" ]; then
+        echo "Disabling compilers"
+
+        chmod 000 /usr/bin/as >/dev/null 2>&1
+        chmod 000 /usr/bin/byacc >/dev/null 2>&1
+        chmod 000 /usr/bin/yacc >/dev/null 2>&1
+        chmod 000 /usr/bin/bcc >/dev/null 2>&1
+        chmod 000 /usr/bin/kgcc >/dev/null 2>&1
+        chmod 000 /usr/bin/cc >/dev/null 2>&1
+        chmod 000 /usr/bin/gcc >/dev/null 2>&1
+        chmod 000 /usr/bin/*c++ >/dev/null 2>&1
+        chmod 000 /usr/bin/*g++ >/dev/null 2>&1
     fi
 }
 

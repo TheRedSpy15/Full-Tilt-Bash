@@ -10,6 +10,17 @@
 ## TODO: disable ipv6
 ## TODO: disable ctrl alt del
 ## TODO: check for home directory encryption
+## TODO: add banner to SSH that says something about government properity
+## TODO: SSH disable X11 forwarding
+## TODO: SSH disable AllowAgentForwarding
+## TODO: SSH disable TCPKeepAlive
+## TODO: SSH disable AllowTCPForwarding
+## TODO: SSH disable compression
+## TODO: setup usbguard
+## TODO: run debsums
+## TODO: setup aide
+## TODO: selinux or apparmor check
+## TODO: remove homebrew
 
 PUR='\033[0;35m' ## Purple
 NC='\033[0m' ## No Color

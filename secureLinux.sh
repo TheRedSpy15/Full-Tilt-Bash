@@ -191,7 +191,7 @@ secure_connections(){
     read -p "Would you like to remove insecure protocols (y/n)?" CONT
     if [ "$CONT" = "y" ]; then
         echo "Removing insecure protocols"
-        yum erase xinetd ypserv tftp-server telnet-server rsh-server dccp sctp rds tipc
+        sudo apt-get --purge remove xinetd nis yp-tools tftpd atftpd tftpd-hpa telnetd rsh-server rsh-redone-server
     fi
 
     ## psad - need to 'noemail' with context

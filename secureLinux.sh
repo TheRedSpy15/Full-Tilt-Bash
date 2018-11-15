@@ -5,7 +5,6 @@
 ## TODO: disable ssh v1
 ## TODO: add openssh support
 ## TODO: uncomment changes to sshd_config and other files
-## TODO: limit to only one instance
 ## TODO: password protect GRUB
 ## TODO: disable ipv6
 ## TODO: disable ctrl alt del
@@ -23,9 +22,9 @@ NC='\033[0m' ## No Color
 update(){
     echo "${PUR}*** Updating system ***${NC}"
 
-    ## Full system update - need a way to check for apt-fast
-    echo "Checking for apt-fast (faster)"
-    if [ $(dpkg-query -W -f='${Status}' apt-fast 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    ## Full system update
+    echo "Checking for apt_fast (faster)"
+    if [ $(dpkg-query -W -f='${Status}' aptfast 2>/dev/null | grep -c "ok installed") -eq 0 ];
     then
         apt-fast update
         apt-fast upgrade
@@ -303,6 +302,7 @@ secure_connections(){
 
                 File="hosts.txt"
                 if [ -e "$File" ]; ## hosts.txt check if exists
+                then
                     File="/etc/hosts"
                     if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
                     then

@@ -4,23 +4,18 @@
 ## TODO: disable guest login
 ## TODO: disable ssh v1
 ## TODO: add openssh support
-## TODO: review steps that modify system files
+## TODO: uncomment changes to sshd_config and other files
 ## TODO: limit to only one instance
 ## TODO: password protect GRUB
 ## TODO: disable ipv6
 ## TODO: disable ctrl alt del
 ## TODO: check for home directory encryption
 ## TODO: add banner to SSH that says something about government properity
-## TODO: SSH disable X11 forwarding
-## TODO: SSH disable AllowAgentForwarding
-## TODO: SSH disable TCPKeepAlive
-## TODO: SSH disable AllowTCPForwarding
 ## TODO: SSH disable compression
-## TODO: setup usbguard
-## TODO: run debsums
 ## TODO: setup aide
 ## TODO: selinux or apparmor check
 ## TODO: remove homebrew
+## TODO: enforce password complexity
 
 PUR='\033[0;35m' ## Purple
 NC='\033[0m' ## No Color
@@ -69,7 +64,8 @@ secure_system(){
 
     ## auditd
     read -p "Would you like to check for auditd (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking for auditd"
         if [ $(dpkg-query -W -f='${Status}' auditd 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
@@ -84,7 +80,8 @@ secure_system(){
 
     ## Clamav
     read -p "Would you like to check for clamav (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking for clamav"
         if [ $(dpkg-query -W -f='${Status}' clamav 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
@@ -92,7 +89,8 @@ secure_system(){
             apt-get install clamav
 
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; then
+            if [ "$CONT" = "y" ]; 
+            then
                 echo "Running scan (Clamav)"
                 clamscan -r --bell -i /
             fi
@@ -105,7 +103,8 @@ secure_system(){
             sudo /etc/init.d/clamav-freshclam start ## restarting auto-updater
 
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; then
+            if [ "$CONT" = "y" ]; 
+            then
                 echo "Running scan (Clamav)"
                 clamscan -r --bell -i /
             fi
@@ -114,7 +113,8 @@ secure_system(){
 
     ## rkhunter
     read -p "Would you like to check for rkhunter (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking for rkhunter"
         if [ $(dpkg-query -W -f='${Status}' rkhunter 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
@@ -122,7 +122,8 @@ secure_system(){
             sudo apt-get install rkhunter
 
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; then
+            if [ "$CONT" = "y" ]; 
+            then
                 echo "Running scan (rkhunter)"
                 rkhunter --check
             fi
@@ -134,7 +135,8 @@ secure_system(){
             rkhunter --versioncheck
 
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; then
+            if [ "$CONT" = "y" ]; 
+            then
                 echo "Running scan (rkhunter)"
                 rkhunter --check
             fi
@@ -143,7 +145,8 @@ secure_system(){
 
     ## Compilers
     read -p "Would you like to disable compilers (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Disabling compilers"
 
         chmod 000 /usr/bin/as >/dev/null 2>&1
@@ -156,6 +159,38 @@ secure_system(){
         chmod 000 /usr/bin/*c++ >/dev/null 2>&1
         chmod 000 /usr/bin/*g++ >/dev/null 2>&1
     fi
+
+    read -p "Would you like to check for debsums (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        echo "Checking for debsums"
+        if [ $(dpkg-query -W -f='${Status}' debsums 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            read -p "Would you like to run debsums now (y/n)?" CONT
+            if [ "$CONT" = "y" ];
+            then
+                debsums
+            fi
+        else
+            apt-get install debsums
+
+            read -p "Would you like to run debsums now (y/n)?" CONT
+            if [ "$CONT" = "y" ]; 
+            then
+                debsums
+            fi
+        fi
+    fi
+
+    read -p "Would you like to check for usbguard (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        echo "Checking for usbguard"
+        if [ $(dpkg-query -W -f='${Status}' usbguard 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            apt-get install usbguard
+        fi
+    fi
 }
 
 secure_hardware(){
@@ -163,7 +198,8 @@ secure_hardware(){
 
     ## Insecure IO - thunderbolt
     read -p "Would you like to check for thunderbolt access (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         File="/etc/modprobe.d/thunderbolt.conf"
         if [ -e "$File" ]; 
         then
@@ -177,7 +213,8 @@ secure_hardware(){
 
     ## Insecure IO - firewire
     read -p "Would you like to check for firewire access (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         File="/etc/modprobe.d/firewire.conf"
         if [ -e "$File" ]; 
         then
@@ -195,21 +232,24 @@ secure_connections(){
 
     ## Firewall
     read -p "Would you like to enforce the firewall to be enabled (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Enforcing firewall"
         ufw enable
     fi
 
     ## Insecure protocols - need if statement
     read -p "Would you like to remove insecure protocols (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Removing insecure protocols"
         sudo apt-get --purge remove xinetd nis yp-tools tftpd atftpd tftpd-hpa telnetd rsh-server rsh-redone-server
     fi
 
     ## psad - need to 'noemail' with context
     read -p "Would you like to check for psad (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking for psad"
         if [ $(dpkg-query -W -f='${Status}' psad 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
@@ -242,7 +282,8 @@ secure_connections(){
 
     ## Malicious domains
     read -p "Would you like to block malicious domains (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Black-listing malicious domains"
         File="hosts.txt"
         if [ -e "$File" ]; ## hosts.txt check if exists
@@ -256,7 +297,8 @@ secure_connections(){
             fi
         else ## hosts.txt missing then download
             read -p "Host file missing. Would you like to download it (y/n)?" CONT
-            if [ "$CONT" = "y" ]; then
+            if [ "$CONT" = "y" ]; 
+            then
                 wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
 
                 File="/etc/hosts"
@@ -278,7 +320,8 @@ secure_ssh(){
 
     ## Limit SSH connections
     read -p "Would you like to limit SSH connections (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Limiting ssh connections"
         ufw limit ssh
         ufw limit openssh
@@ -286,7 +329,8 @@ secure_ssh(){
 
     ## Root login
     read -p "Would you like to disable SSH root login (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking if root login allowed"
         File="/etc/ssh/sshd_config"
         if ! grep -q 'DenyUsers root' "$File"; 
@@ -303,7 +347,8 @@ secure_ssh(){
     ## SSH port - review as default sshd_config might need to uncomment port number
     ## need check for this one as port number could be already changed to something other than 22 or 3333
     read -p "Would you like to change ssh port from default (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking SSH port number"
         if grep -q 'Port 22' "$File"; 
         then
@@ -316,7 +361,8 @@ secure_ssh(){
 
     ## fail2ban
     read -p "Would you like to check for fail2ban (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Checking for fail2ban"
         if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
@@ -326,6 +372,30 @@ secure_ssh(){
             echo "fail2ban already installed"
         fi
     fi
+
+    read -p "Would you like to disable X11Forwarding (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
+    fi
+
+    read -p "Would you like to disable TCPKeepAlive (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        sed -i 's/TCPKeepAlive yes/TCPKeepAlive no/g' /etc/ssh/sshd_config
+    fi
+
+    read -p "Would you like to disable AllowTcpForwarding (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        sed -i 's/AllowTcpForwarding yes/AllowTcpForwarding no/g' /etc/ssh/sshd_config
+    fi
+
+    read -p "Would you like to disable AllowAgentForwarding (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        sed -i 's/AllowAgentForwarding yes/AllowAgentForwarding no/g' /etc/ssh/sshd_config
+    fi
 }
 
 secure_user(){
@@ -333,7 +403,8 @@ secure_user(){
 
     ## Maximum password age - no need for if statement
     read -p "Would you like to limit password age to 100 days for root (y/n)?" CONT
-    if [ "$CONT" = "y" ]; then
+    if [ "$CONT" = "y" ]; 
+    then
         echo "Enforcing maximum password age of root (100 days)"
         chage -M 100 root
     fi
@@ -341,7 +412,8 @@ secure_user(){
 
 sudo_check
 read -p "Would you like to completely update now (y/n)?" CONT
-if [ "$CONT" = "y" ]; then
+if [ "$CONT" = "y" ]; 
+then
     update
 fi
 secure_system

@@ -301,12 +301,17 @@ secure_connections(){
             then
                 wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
 
-                File="/etc/hosts"
-                if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
-                then
-                    cat hosts.txt >> /etc/hosts
+                File="hosts.txt"
+                if [ -e "$File" ]; ## hosts.txt check if exists
+                    File="/etc/hosts"
+                    if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+                    then
+                        cat hosts.txt >> /etc/hosts
+                    else
+                        echo "Malicious domains already blocked"
+                    fi
                 else
-                    echo "Malicious domains already blocked"
+                    echo "Failed to find host.txt... Resuming"
                 fi
             else
                 echo "Resuming"

@@ -26,6 +26,8 @@ update(){
     echo "Checking for apt_fast (faster)"
     if [ $(dpkg-query -W -f='${Status}' aptfast 2>/dev/null | grep -c "ok installed") -eq 0 ];
     then
+        echo "apt-fast installed" ## apt-fast
+
         apt-fast update
         apt-fast upgrade
         apt-fast dist-upgrade
@@ -33,7 +35,7 @@ update(){
         apt-fast autoclean
         apt-fast check
     else
-        echo "apt-fast not installed"
+        echo "apt-fast not installed" ## apt-get
         echo "Using default process"
 
         apt-get update
@@ -45,8 +47,12 @@ update(){
     fi
 
     ## Automatic updates
-    echo "Enforcing automatic updates"
-    sed -i 's/Update-Package-Lists "0"/Update-Package-Lists "1"/g' /etc/apt/apt.conf.d/20auto-upgrades
+    read -p "Would you like to enable automatic updates (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        echo "Enforcing automatic updates"
+        sed -i 's/Update-Package-Lists "0"/Update-Package-Lists "1"/g' /etc/apt/apt.conf.d/20auto-upgrades
+    fi
 }
 
 sudo_check(){
@@ -62,7 +68,7 @@ secure_system(){
     echo "${PUR}*** Securing system ***${NC}"
 
     ## auditd
-    read -p "Would you like to check for auditd (y/n)?" CONT
+    read -p "Would you like to install auditd (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for auditd"
@@ -78,7 +84,7 @@ secure_system(){
     fi
 
     ## Clamav
-    read -p "Would you like to check for clamav (y/n)?" CONT
+    read -p "Would you like to install clamav (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for clamav"
@@ -111,7 +117,7 @@ secure_system(){
     fi
 
     ## rkhunter
-    read -p "Would you like to check for rkhunter (y/n)?" CONT
+    read -p "Would you like to install rkhunter (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for rkhunter"
@@ -159,7 +165,8 @@ secure_system(){
         chmod 000 /usr/bin/*g++ >/dev/null 2>&1
     fi
 
-    read -p "Would you like to check for debsums (y/n)?" CONT
+    ## debsums
+    read -p "Would you like to install debsums (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for debsums"
@@ -181,7 +188,8 @@ secure_system(){
         fi
     fi
 
-    read -p "Would you like to check for usbguard (y/n)?" CONT
+    ## usbguard
+    read -p "Would you like to install usbguard (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for usbguard"
@@ -196,7 +204,7 @@ secure_hardware(){
     echo "${PUR}*** Securing hardware access ***${NC}"
 
     ## Insecure IO - thunderbolt
-    read -p "Would you like to check for thunderbolt access (y/n)?" CONT
+    read -p "Would you like to disable thunderbolt access (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         File="/etc/modprobe.d/thunderbolt.conf"
@@ -211,7 +219,7 @@ secure_hardware(){
     fi
 
     ## Insecure IO - firewire
-    read -p "Would you like to check for firewire access (y/n)?" CONT
+    read -p "Would you like to disable firewire access (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         File="/etc/modprobe.d/firewire.conf"
@@ -230,10 +238,10 @@ secure_connections(){
     echo "${PUR}*** Securing connections ***${NC}"
 
     ## Firewall
-    read -p "Would you like to enforce the firewall to be enabled (y/n)?" CONT
+    read -p "Would you like to enable the firewall (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
-        echo "Enforcing firewall"
+        echo "Enabling firewall"
         ufw enable
     fi
 
@@ -246,7 +254,7 @@ secure_connections(){
     fi
 
     ## psad - need to 'noemail' with context
-    read -p "Would you like to check for psad (y/n)?" CONT
+    read -p "Would you like to install psad (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for psad"
@@ -365,7 +373,7 @@ secure_ssh(){
     fi
 
     ## fail2ban
-    read -p "Would you like to check for fail2ban (y/n)?" CONT
+    read -p "Would you like to install fail2ban (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         echo "Checking for fail2ban"
@@ -378,24 +386,28 @@ secure_ssh(){
         fi
     fi
 
+    ## X11Forwarding
     read -p "Would you like to disable X11Forwarding (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
     fi
 
+    ## TCPKeepAlive
     read -p "Would you like to disable TCPKeepAlive (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         sed -i 's/TCPKeepAlive yes/TCPKeepAlive no/g' /etc/ssh/sshd_config
     fi
 
+    ## AllowTcpForwarding
     read -p "Would you like to disable AllowTcpForwarding (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
         sed -i 's/AllowTcpForwarding yes/AllowTcpForwarding no/g' /etc/ssh/sshd_config
     fi
 
+    ## AllowAgentForwarding
     read -p "Would you like to disable AllowAgentForwarding (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
@@ -410,7 +422,7 @@ secure_user(){
     read -p "Would you like to limit password age to 100 days for root (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
-        echo "Enforcing maximum password age of root (100 days)"
+        echo "Setting maximum password age of root (100 days)"
         chage -M 100 root
     fi
 }

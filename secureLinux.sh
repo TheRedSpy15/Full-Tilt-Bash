@@ -12,7 +12,7 @@
 ## TODO: add banner to SSH that says something about government properity
 ## TODO: SSH disable compression
 ## TODO: setup aide
-## TODO: selinux or apparmor check
+## TODO: setup selinux or apparmor
 ## TODO: remove homebrew
 ## TODO: enforce password complexity
 

@@ -27,7 +27,7 @@ update(){
     read -p "Would you like to completely update now (y/n)?" CONT
     if [ "$CONT" = "y" ]; 
     then
-        echo "Checking for apt_fast (faster)"
+        echo "Checking for apt-fast (faster)"
         if [ $(dpkg-query -W -f='${Status}' aptfast 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
             echo "apt-fast installed" ## apt-fast

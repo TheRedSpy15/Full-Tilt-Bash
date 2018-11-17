@@ -25,7 +25,7 @@ update(){
     ## Full system update
     espeak "Would you like to completely update now"
     read -p "Would you like to completely update now (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         echo "Checking for apt-fast (faster)"
         if [ $(dpkg-query -W -f='${Status}' aptfast 2>/dev/null | grep -c "ok installed") -eq 0 ];
@@ -54,7 +54,7 @@ update(){
     ## Automatic updates
     espeak "Would you like to enable automatic updates"
     read -p "Would you like to enable automatic updates (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Enabling automatic updates"
         echo "Enabling automatic updates"
@@ -64,7 +64,7 @@ update(){
 
 sudo_check(){
     ## Root/sudo check
-    if [ $(whoami) != "root" ]; 
+    if [ $(whoami) != "root" ];
     then
         echo "${PUR}Must be root to run script"
         exit
@@ -77,7 +77,7 @@ secure_system(){
     ## auditd
     espeak "Would you like to install audit d"
     read -p "Would you like to install auditd (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for audit d"
         echo "Checking for auditd"
@@ -97,7 +97,7 @@ secure_system(){
     ## Clamav
     espeak "Would you like to install clam a v"
     read -p "Would you like to install clamav (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for clam a v"
         echo "Checking for clamav"
@@ -109,7 +109,7 @@ secure_system(){
 
             espeak "Would you like to run a scan now"
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 espeak "Running scan"
                 echo "Running scan (Clamav)"
@@ -127,7 +127,7 @@ secure_system(){
 
             espeak "Would you like run a scan now"
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 espeak "Running scan"
                 echo "Running scan (Clamav)"
@@ -139,7 +139,7 @@ secure_system(){
     ## rkhunter
     espeak "Would you like to install r k hunter"
     read -p "Would you like to install rkhunter (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for r k hunter"
         echo "Checking for rkhunter"
@@ -151,7 +151,7 @@ secure_system(){
 
             espeak "Would you like to run a scan now"
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 espeak "Running scan"
                 echo "Running scan (rkhunter)"
@@ -168,7 +168,7 @@ secure_system(){
 
             espeak "Would you like to run a scan now"
             read -p "Would you like to run a scan now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 espeak "Running scan"
                 echo "Running scan (rkhunter)"
@@ -180,7 +180,7 @@ secure_system(){
     ## Compilers
     espeak "Would you like to disable compilers"
     read -p "Would you like to disable compilers (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Disabling compilers"
         echo "Disabling compilers"
@@ -199,7 +199,7 @@ secure_system(){
     ## debsums
     espeak "Would you like to install deb sums"
     read -p "Would you like to install debsums (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for deb sums"
         echo "Checking for debsums"
@@ -211,7 +211,7 @@ secure_system(){
 
             espeak "Would you like to run deb sums now"
             read -p "Would you like to run debsums now (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 debsums
             fi
@@ -235,7 +235,7 @@ secure_hardware(){
     ## usbguard
     espeak "Would you like to install u s b guard"
     read -p "Would you like to install usbguard (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for u s b guard"
         echo "Checking for usbguard"
@@ -254,12 +254,12 @@ secure_hardware(){
     ## Insecure IO - thunderbolt
     espeak "Would you like to disable thunderbolt access"
     read -p "Would you like to disable thunderbolt access (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         File="/etc/modprobe.d/thunderbolt.conf"
-        if [ -e "$File" ]; 
+        if [ -e "$File" ];
         then
-            if ! grep -q 'blacklist thunderbolt' "$File"; 
+            if ! grep -q 'blacklist thunderbolt' "$File";
             then
                 espeak "Disabling thunder access"
                 echo "Disabling thunderbolt access"
@@ -271,12 +271,12 @@ secure_hardware(){
     ## Insecure IO - firewire
     espeak "Would you like to disable fire wire access"
     read -p "Would you like to disable firewire access (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         File="/etc/modprobe.d/firewire.conf"
-        if [ -e "$File" ]; 
+        if [ -e "$File" ];
         then
-            if ! grep -q 'blacklist firewire-core' "$File"; 
+            if ! grep -q 'blacklist firewire-core' "$File";
             then
                 espeak "Disabling fire wire access"
                 echo "Disabling firewire access"
@@ -292,7 +292,7 @@ secure_connections(){
     ## Firewall
     espeak "Would you like to enable the firewall"
     read -p "Would you like to enable the firewall (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Enabling the firewall"
         echo "Enabling firewall"
@@ -302,7 +302,7 @@ secure_connections(){
     ## Insecure protocols - need if statement
     espeak "Would you like to remove insecure protocols"
     read -p "Would you like to remove insecure protocols (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Removing insecure protocols"
         echo "Removing insecure protocols"
@@ -312,7 +312,7 @@ secure_connections(){
     ## psad - need to 'noemail' with context
     espeak "Would you like to install p s a d"
     read -p "Would you like to install psad (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for p s a d"
         echo "Checking for psad"
@@ -345,7 +345,7 @@ secure_connections(){
 
             espeak "Updating p s a d"
             echo "Updating psad"
-            
+
             psad --sig-update
             psad -H
         fi
@@ -354,7 +354,7 @@ secure_connections(){
     ## Malicious domains
     espeak "Would you like to block malicious domains"
     read -p "Would you like to block malicious domains (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Black listing malicious domains"
         echo "Black-listing malicious domains"
@@ -362,7 +362,7 @@ secure_connections(){
         if [ -e "$File" ]; ## hosts.txt check if exists
         then
             File="/etc/hosts"
-            if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+            if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File";
             then
                 cat hosts.txt >> /etc/hosts
             else
@@ -372,7 +372,7 @@ secure_connections(){
         else ## hosts.txt missing then download
             espeak "Host file missing. Would you like to download it"
             read -p "Host file missing. Would you like to download it (y/n)?" CONT
-            if [ "$CONT" = "y" ]; 
+            if [ "$CONT" = "y" ];
             then
                 wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
 
@@ -380,7 +380,7 @@ secure_connections(){
                 if [ -e "$File" ]; ## hosts.txt check if exists
                 then
                     File="/etc/hosts"
-                    if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File"; 
+                    if ! grep -q '# Malicious hosts to block (Full-Tilt-Bash/secureLinux.sh)' "$File";
                     then
                         cat hosts.txt >> /etc/hosts
                     else
@@ -405,7 +405,7 @@ secure_ssh(){
     ## fail2ban
     espeak "Would you like to install fail2ban"
     read -p "Would you like to install fail2ban (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking for fail2ban"
         echo "Checking for fail2ban"
@@ -421,9 +421,9 @@ secure_ssh(){
     fi
 
     ## Limit SSH connections
-    espeak "Would you like to limit SSH connections"  
+    espeak "Would you like to limit SSH connections"
     read -p "Would you like to limit SSH connections (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Limiting SSH connections"
         echo "Limiting SSH connections"
@@ -434,12 +434,12 @@ secure_ssh(){
     ## Root login
     espeak "Would you like to disable SSH root login"
     read -p "Would you like to disable SSH root login (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking if root login allowed"
         echo "Checking if root login allowed"
         File="/etc/ssh/sshd_config"
-        if ! grep -q 'DenyUsers root' "$File"; 
+        if ! grep -q 'DenyUsers root' "$File";
         then
             espeak "Disabling root login"
             echo "Disabling root login sshd"
@@ -456,15 +456,15 @@ secure_ssh(){
     ## need check for this one as port number could be already changed to something other than 22 or 3333
     espeak "Would you like to change the ssh port from default"
     read -p "Would you like to change ssh port from default (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Checking SSH port number"
         echo "Checking SSH port number"
-        if grep -q 'Port 22' "$File"; 
+        if grep -q 'Port 22' "$File";
         then
             espeak "Changing SSH port to 3 3 3 3"
             echo "Changing SSH port to 3333"
-            sed -i 's/Port 22/Port 3333/g' /etc/ssh/sshd_config 
+            sed -i 's/Port 22/Port 3333/g' /etc/ssh/sshd_config
         else
             espeak "SSH port already changed from default"
             echo "SSH port already changed from default"
@@ -474,7 +474,7 @@ secure_ssh(){
     ## X11Forwarding
     espeak "Would you like to disable X 11 Forwarding"
     read -p "Would you like to disable X11Forwarding (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
     fi
@@ -482,7 +482,7 @@ secure_ssh(){
     ## TCPKeepAlive
     espeak "Would you like to disable TCPKeepAlive"
     read -p "Would you like to disable TCPKeepAlive (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         sed -i 's/TCPKeepAlive yes/TCPKeepAlive no/g' /etc/ssh/sshd_config
     fi
@@ -490,7 +490,7 @@ secure_ssh(){
     ## AllowTcpForwarding
     espeak "Would you like to disable AllowTcpForwarding"
     read -p "Would you like to disable AllowTcpForwarding (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         sed -i 's/AllowTcpForwarding yes/AllowTcpForwarding no/g' /etc/ssh/sshd_config
     fi
@@ -510,7 +510,7 @@ secure_user(){
     ## Maximum password age - no need for if statement
     espeak "Would you like to limit password age to 100 days for root"
     read -p "Would you like to limit password age to 100 days for root (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         espeak "Setting maximum password age of root"
         echo "Setting maximum password age of root (100 days)"

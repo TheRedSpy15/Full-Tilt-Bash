@@ -227,6 +227,10 @@ secure_system(){
             fi
         fi
     fi
+}
+
+secure_hardware(){
+    echo "${PUR}*** Securing hardware access ***${NC}"
 
     ## usbguard
     espeak "Would you like to install u s b guard"
@@ -237,13 +241,15 @@ secure_system(){
         echo "Checking for usbguard"
         if [ $(dpkg-query -W -f='${Status}' usbguard 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
+            espeak "Installing u s b guard"
+            echo "Installing usbguard"
+
             apt-get install usbguard
+        else
+            espeak "u s b guard already installed"
+            echo "usbguard already installed"
         fi
     fi
-}
-
-secure_hardware(){
-    echo "${PUR}*** Securing hardware access ***${NC}"
 
     ## Insecure IO - thunderbolt
     espeak "Would you like to disable thunderbolt access"
@@ -396,6 +402,24 @@ secure_connections(){
 secure_ssh(){
     echo "${PUR}*** Securing SSH ***${NC}"
 
+    ## fail2ban
+    espeak "Would you like to install fail2ban"
+    read -p "Would you like to install fail2ban (y/n)?" CONT
+    if [ "$CONT" = "y" ]; 
+    then
+        espeak "Checking for fail2ban"
+        echo "Checking for fail2ban"
+        if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            espeak "Installing fail2ban"
+            echo "Installing fail2ban"
+            sudo apt-get install fail2ban
+        else
+            espeak "fail2ban already installed"
+            echo "fail2ban already installed"
+        fi
+    fi
+
     ## Limit SSH connections
     espeak "Would you like to limit SSH connections"  
     read -p "Would you like to limit SSH connections (y/n)?" CONT
@@ -444,24 +468,6 @@ secure_ssh(){
         else
             espeak "SSH port already changed from default"
             echo "SSH port already changed from default"
-        fi
-    fi
-
-    ## fail2ban
-    espeak "Would you like to install fail2ban"
-    read -p "Would you like to install fail2ban (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
-    then
-        espeak "Checking for fail2ban"
-        echo "Checking for fail2ban"
-        if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
-        then
-            espeak "Installing fail2ban"
-            echo "Installing fail2ban"
-            sudo apt-get install fail2ban
-        else
-            espeak "fail2ban already installed"
-            echo "fail2ban already installed"
         fi
     fi
 

@@ -16,6 +16,8 @@
 ## TODO: enforce password complexity
 
 PUR='\033[0;35m' ## Purple
+RED='\033[0;31m' ## Red
+YEL='\033[1;33m' ## Yellow
 NC='\033[0m' ## No Color
 
 update(){
@@ -37,7 +39,7 @@ update(){
             apt-fast autoclean
             apt-fast check
         else
-            echo "apt-fast not installed" ## apt-get
+            echo "${YEL}apt-fast not installed${NC}" ## apt-get
             echo "Using default process"
 
             apt-get update
@@ -62,7 +64,7 @@ sudo_check(){
     ## Root/sudo check
     if [ $(whoami) != "root" ];
     then
-        echo "${PUR}Must be root to run script"
+        echo "${RED}Must be root to run script"
         exit
     fi
 }
@@ -79,7 +81,7 @@ secure_system(){
         then
             sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
         else
-            echo "ruby not installed"
+            echo "${YEL}ruby not installed${NC}"
 
             read -p "Would you like to install ruby (y/n)?" CONT
             if [ "$CONT" = "y" ];
@@ -341,7 +343,7 @@ secure_connections(){
                 echo "Malicious domains already blocked"
             fi
         else ## hosts.txt missing then download
-            read -p "Host file missing. Would you like to download it (y/n)?" CONT
+            read -p "${YEL}Host file missing. Would you like to download it (y/n)?${NC}" CONT
             if [ "$CONT" = "y" ];
             then
                 wget "https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/hosts.txt"
@@ -357,7 +359,7 @@ secure_connections(){
                         echo "Malicious domains already blocked"
                     fi
                 else
-                    echo "Failed to find host file... Resuming"
+                    echo "${RED}Failed to find host file... Resuming${NC}"
                 fi
             else
                 echo "Resuming"

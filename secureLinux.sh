@@ -13,7 +13,6 @@
 ## TODO: SSH disable compression
 ## TODO: setup aide
 ## TODO: setup selinux or apparmor
-## TODO: remove homebrew
 ## TODO: enforce password complexity
 
 PUR='\033[0;35m' ## Purple
@@ -71,7 +70,27 @@ sudo_check(){
 secure_system(){
     echo "${PUR}*** Securing system ***${NC}"
 
-    ## auditd\
+    ## Homebrew - need check for homebrew
+    read -p "Would you like to remove homebrew (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Checking for ruby (needed to remove)"
+        if [ $(dpkg-query -W -f='${Status}' ruby-full 2>/dev/null | grep -c "ok installed") -eq 0 ];
+        then
+            sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+        else
+            echo "ruby not installed"
+
+            read -p "Would you like to install ruby (y/n)?" CONT
+            if [ "$CONT" = "y" ];
+            then
+                sudo apt-get install ruby-full
+                sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+            fi
+        fi
+    fi
+
+    ## auditd
     read -p "Would you like to install auditd (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
@@ -251,6 +270,7 @@ secure_connections(){
     ## Bluetooth
     read -p "Would you like to disable bluetooth (y/n)?" CONT
     if [ "$CONT" = "y" ];
+    then
         systemctl disable bluetooth
     fi
 

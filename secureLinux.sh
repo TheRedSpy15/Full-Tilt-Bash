@@ -15,7 +15,6 @@
 ## TODO: setup selinux or apparmor
 ## TODO: remove homebrew
 ## TODO: enforce password complexity
-## TODO: disable bluetooth
 
 PUR='\033[0;35m' ## Purple
 NC='\033[0m' ## No Color
@@ -248,6 +247,12 @@ secure_hardware(){
 
 secure_connections(){
     echo "${PUR}*** Securing connections ***${NC}"
+
+    ## Bluetooth
+    read -p "Would you like to disable bluetooth (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+        systemctl disable bluetooth
+    fi
 
     ## Firewall
     read -p "Would you like to enable the firewall (y/n)?" CONT

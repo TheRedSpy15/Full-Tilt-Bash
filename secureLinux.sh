@@ -15,6 +15,7 @@
 ## TODO: setup selinux or apparmor
 ## TODO: remove homebrew
 ## TODO: enforce password complexity
+## TODO: disable bluetooth
 
 PUR='\033[0;35m' ## Purple
 NC='\033[0m' ## No Color
@@ -498,7 +499,7 @@ secure_ssh(){
     ## AllowAgentForwarding
     espeak "Would you like to disable AllowAgentForwarding"
     read -p "Would you like to disable AllowAgentForwarding (y/n)?" CONT
-    if [ "$CONT" = "y" ]; 
+    if [ "$CONT" = "y" ];
     then
         sed -i 's/AllowAgentForwarding yes/AllowAgentForwarding no/g' /etc/ssh/sshd_config
     fi

@@ -220,7 +220,7 @@ secure_system(){
     read -p "Would you like to create a secure /tmp (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
-        echo "We will create a FileSystem for the /tmp Directory and set Proper Permissions "
+        echo "Creating a FileSystem for the /tmp Directory and set Proper Permissions "
         dd if=/dev/zero of=/usr/tmpDISK bs=1024 count=2048000
         mkdir /tmpbackup
         cp -Rpf /tmp /tmpbackup

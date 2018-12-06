@@ -220,7 +220,7 @@ secure_system(){
     read -p "Would you like to create a secure /tmp (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
-        echo "Creating a FileSystem for the /tmp Directory and set Proper Permissions "
+        echo "Creating a FileSystem for the /tmp Directory and set Proper Permissions"
         dd if=/dev/zero of=/usr/tmpDISK bs=1024 count=2048000
         mkdir /tmpbackup
         cp -Rpf /tmp /tmpbackup
@@ -395,6 +395,7 @@ secure_ssh(){
         if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
             echo "Installing fail2ban"
+            sudo apt-get install sendmail
             sudo apt-get install fail2ban
         else
             echo "fail2ban already installed"

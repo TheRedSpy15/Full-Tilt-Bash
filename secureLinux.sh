@@ -215,6 +215,22 @@ secure_system(){
             fi
         fi
     fi
+
+    ## Secure /tmp
+    read -p "Would you like to create a secure /tmp (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "We will create a FileSystem for the /tmp Directory and set Proper Permissions "
+        dd if=/dev/zero of=/usr/tmpDISK bs=1024 count=2048000
+        mkdir /tmpbackup
+        cp -Rpf /tmp /tmpbackup
+        mount -t tmpfs -o loop,noexec,nosuid,rw /usr/tmpDISK /tmp
+        chmod 1777 /tmp
+        cp -Rpf /tmpbackup/* /tmp/
+        rm -rf /tmpbackup
+        echo "/usr/tmpDISK  /tmp    tmpfs   loop,nosuid,nodev,noexec,rw  0 0" >> /etc/fstab
+        sudo mount -o remount /tmp
+    fi
 }
 
 secure_hardware(){

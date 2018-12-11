@@ -6,14 +6,14 @@
 ## TODO: add openssh support
 ## TODO: uncomment changes to sshd_config and other files
 ## TODO: password protect GRUB
-## TODO: disable ipv6
-## TODO: disable ctrl alt del
 ## TODO: check for home directory encryption
 ## TODO: add banner to SSH that says something about government properity
 ## TODO: SSH disable compression
 ## TODO: setup aide
 ## TODO: setup selinux or apparmor
-## TODO: enforce password complexity
+## TODO: enforce password complexity (after installing libpam-cracklib support)
+## TODO: attempt a script updater
+## TODO: check for hosts.txt and templates at start
 
 PUR='\033[0;35m' ## Purple
 RED='\033[0;31m' ## Red
@@ -38,6 +38,7 @@ update(){
             apt-fast autoremove
             apt-fast autoclean
             apt-fast check
+            update-grub
         else
             echo "${YEL}apt-fast not installed${NC}" ## apt-get
             echo "Using default process"
@@ -48,6 +49,7 @@ update(){
             apt-get autoremove
             apt-get autoclean
             apt-get check
+            update-grub
         fi
     fi
 
@@ -60,11 +62,11 @@ update(){
     fi
 }
 
+## Root/sudo check
 sudo_check(){
-    ## Root/sudo check
-    if [ $(whoami) != "root" ];
+    if [ $EUID -ne 0 ];
     then
-        echo "${RED}Must be root to run script"
+        echo "Must be root to run script"
         exit
     fi
 }
@@ -73,6 +75,7 @@ secure_system(){
     echo "${PUR}*** Securing system ***${NC}"
 
     ## Homebrew - need check for homebrew
+    ## TODO: only run if homebrew is installed
     read -p "Would you like to remove homebrew (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
@@ -90,6 +93,15 @@ secure_system(){
                 sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
             fi
         fi
+    fi
+
+    ## ctrl alt del
+    read -p "Would you like to disable ctrl + alt + del (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Disabling ctrl + alt + del"
+        systemctl mask ctrl-alt-del.target
+        systemctl daemon-reload
     fi
 
     ## auditd
@@ -231,6 +243,90 @@ secure_system(){
         echo "/usr/tmpDISK  /tmp    tmpfs   loop,nosuid,nodev,noexec,rw  0 0" >> /etc/fstab
         sudo mount -o remount /tmp
     fi
+
+    ## Secure kernal
+    ## TODO: add handling for missing templates
+    ## TODO: stop printing to screen
+    read -p "Would you like to secure the kernal (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Securing Linux Kernel"
+        echo "* hard core 0" >> /etc/security/limits.conf
+        cp templates/sysctl.conf /etc/sysctl.conf; echo " OK"
+        cp templates/ufw /etc/default/ufw
+        sysctl -e -p
+    fi
+
+    ## Unused file systems
+    read -p "Would you like to disable unused filesystems (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Disabling filesystems"
+        echo "install cramfs /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install freevxfs /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install jffs2 /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install hfs /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install hfsplus /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install squashfs /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install udf /bin/true" >> /etc/modprobe.d/CIS.conf
+        echo "install vfat /bin/true" >> /etc/modprobe.d/CIS.conf
+    fi
+
+    ## umask
+    read -p "Would you like to set a more secure umask (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Securing umask"
+        cp templates/login.defs /etc/login.defs
+    fi
+
+    ## Protect grub
+    read -p "Would you like to set a password for grub (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "Protecting grub"
+
+        grub-mkpasswd-pbkdf2 | tee grubpassword.tmp
+        grubpassword=$(cat grubpassword.tmp | sed -e '1,2d' | cut -d ' ' -f7)
+        echo " set superusers="root" " >> /etc/grub.d/40_custom
+        echo " password_pbkdf2 root $grubpassword " >> /etc/grub.d/40_custom
+        rm grubpassword.tmp
+        update-grub
+
+        sleep 2
+        chown root:root /boot/grub/grub.cfg
+        chmod og-rwx /boot/grub/grub.cfg
+    fi
+
+    ## file permissions
+    read -p "Would you like to set permissions on system files (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        sleep 2
+        chmod -R g-wx,o-rwx /var/log/*
+        chown root:root /etc/ssh/sshd_config
+        chmod og-rwx /etc/ssh/sshd_config
+        chown root:root /etc/passwd
+        chmod 644 /etc/passwd
+        chown root:shadow /etc/shadow
+        chmod o-rwx,g-wx /etc/shadow
+        chown root:root /etc/group
+        chmod 644 /etc/group
+        chown root:shadow /etc/gshadow
+        chmod o-rwx,g-rw /etc/gshadow
+        chown root:root /etc/passwd-
+        chmod 600 /etc/passwd-
+        chown root:root /etc/shadow-
+        chmod 600 /etc/shadow-
+        chown root:root /etc/group-
+        chmod 600 /etc/group-
+        chown root:root /etc/gshadow-
+        chmod 600 /etc/gshadow-
+
+        sleep 2
+
+        df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+    fi
 }
 
 secure_hardware(){
@@ -289,6 +385,7 @@ secure_connections(){
     read -p "Would you like to disable bluetooth (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
+        echo "Disabling bluetooth"
         systemctl disable bluetooth
     fi
 
@@ -309,6 +406,7 @@ secure_connections(){
     fi
 
     ## psad - need to 'noemail' with context
+    ## TODO: add handling for missing template
     read -p "Would you like to install psad (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
@@ -316,10 +414,10 @@ secure_connections(){
         if [ $(dpkg-query -W -f='${Status}' psad 2>/dev/null | grep -c "ok installed") -eq 0 ];
         then
             echo "Installing psad"
+            echo -n "Type an Email Address to Receive PSAD Alerts: " ; read email
+            echo -n "Type a Name to Identify this server : "; read host_name
+            echo -n "Type a Domain name : "; read domain_name
             apt-get install psad
-
-            sudo iptables -A INPUT -j LOG
-            sudo iptables -A FORWARD -j LOG
 
             ## Make iptables rules persistent
             if [ $(dpkg-query -W -f='${Status}' iptables-persistent 2>/dev/null | grep -c "ok installed") -eq 0 ];
@@ -330,9 +428,17 @@ secure_connections(){
                 service iptables-persistent start
             fi
 
+            sudo iptables -A INPUT -j LOG
+            sudo iptables -A FORWARD -j LOG
+
             echo "Configuring psad settings"
-            sed -i s/_CHANGEME_/$(whoami)/g /etc/psad/psad.conf ## Hostname
-            sed -i s/ALERTING_METHODS            ALL/$(whoami)/g /etc/psad/psad.conf ## Alerting method
+            sed -i s/INBOX/$email/g templates/psad.conf
+            sed -i s/CHANGEME/$host_name.$domain_name/g templates/psad.conf
+            cp templates/psad.conf /etc/psad/psad.conf
+
+            psad --sig-update
+            psad -H
+            service psad restart
         else
             echo "psad already installed"
 

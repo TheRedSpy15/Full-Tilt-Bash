@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $(whoami) != "root" ]; 
+if [ $(whoami) != "root" ];
 then
     echo "Must be root to run script"
     exit
@@ -17,6 +17,7 @@ then
     apt-fast autoremove
     apt-fast autoclean
     apt-fast check
+    update-grub
 else
     echo "apt-fast not installed" ## apt-get
     echo "Using default process"
@@ -27,4 +28,5 @@ else
     apt-get autoremove
     apt-get autoclean
     apt-get check
+    update-grub
 fi

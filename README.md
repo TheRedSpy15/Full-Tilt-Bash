@@ -3,14 +3,14 @@ Bash scripts to designed to quickly setup Debian/Ubuntu based distros.
 
 ## Completed scripts
 **These will still be updated**
-- [x] setupLinux.sh
+- [x] update.sh
 - [ ] setupTools.sh
 - [x] setupLAMP.sh
 - [x] trainLoop.sh
 - [ ] secureLinux.sh
 
-## setupLinux.sh
-Runs commands that should be done after a fresh install of Linux, and properly updating and cleaning packages. Is still useful afterwards too. I use it on a daily bases.
+## update.sh
+Properly updates a linux machine. Not only does it update packages, it removes old ones, and even updates grub
 
 ## setupTools.sh
 Installs a large arsenal of pentesting tools, that every pentester should have.

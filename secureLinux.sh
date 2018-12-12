@@ -12,13 +12,32 @@
 ## TODO: setup aide
 ## TODO: setup selinux or apparmor
 ## TODO: enforce password complexity (after installing libpam-cracklib support)
-## TODO: attempt a script updater
-## TODO: check for hosts.txt and templates at start
 
 PUR='\033[0;35m' ## Purple
 RED='\033[0;31m' ## Red
 YEL='\033[1;33m' ## Yellow
 NC='\033[0m' ## No Color
+
+update_templates(){
+    read -p "Would you like to update templates (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        wget -O templates/ufw https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/templates/ufw
+        wget -O templates/common-auth https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/templates/common-auth
+        wget -O templates/login.defs https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/templates/login.defs
+        wget -O templates/psad.conf https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/templates/psad.conf
+        wget -O templates/sysctl.conf https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/templates/sysctl.conf
+    fi
+}
+
+update_script(){
+    read -p "Would you like to update the script (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        wget -O https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/secureLinux.sh
+        echo "Will take affect next time the script is ran"
+    fi
+}
 
 update(){
     echo "${PUR}*** Updating system ***${NC}"
@@ -63,6 +82,7 @@ update(){
 }
 
 ## Root/sudo check
+## * secureLinux.sh: 79: [: -ne: unexpected operator
 sudo_check(){
     if [ $EUID -ne 0 ];
     then
@@ -601,6 +621,8 @@ secure_user(){
 }
 
 sudo_check
+update_script
+update_templates
 update
 secure_system
 secure_connections

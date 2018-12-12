@@ -298,6 +298,16 @@ secure_system(){
         chmod og-rwx /boot/grub/grub.cfg
     fi
 
+    # 2FA
+    read -p "Would you like to enable 2FA (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        sudo apt install libpam-google-authenticator
+        cp -f  templates/common-auth /etc/pam.d/common-auth
+        sudo apt install google-authenticator
+        google-authenticator
+    fi
+
     ## file permissions
     read -p "Would you like to set permissions on system files (y/n)?" CONT
     if [ "$CONT" = "y" ];

@@ -5,7 +5,6 @@
 ## TODO: disable ssh v1
 ## TODO: add openssh support
 ## TODO: uncomment changes to sshd_config and other files
-## TODO: password protect GRUB
 ## TODO: check for home directory encryption
 ## TODO: add banner to SSH that says something about government properity
 ## TODO: SSH disable compression

@@ -1,5 +1,5 @@
 # Full-Tilt-Bash
-Bash scripts to designed to quickly setup Debian/Ubuntu based distros.
+Bash scripts to designed to quickly setup Ubuntu 18.04 and later systems
 
 ## Completed scripts
 **These will still be updated**

@@ -34,7 +34,7 @@ update_script(){
     read -p "Would you like to update the script (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
-        wget -O https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/secureLinux.sh
+        wget -O secureLinux.sh https://raw.githubusercontent.com/TheRedSpy15/Full-Tilt-Bash/master/secureLinux.sh
         echo "Will take affect next time the script is ran"
     fi
 }

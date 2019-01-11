@@ -656,6 +656,8 @@ secure_ssh(){
     read -p "Would you like to securely configure SSH (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
+        echo "Configuring SSH"
+    
         sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
         sed -i 's/TCPKeepAlive yes/TCPKeepAlive no/g' /etc/ssh/sshd_config
         sed -i 's/AllowTcpForwarding yes/AllowTcpForwarding no/g' /etc/ssh/sshd_config
@@ -768,6 +770,7 @@ secure_user(){
     read -p "Would you like to remove insecure users (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
+    echo "Removing insecure users"
         for users in games gnats irc list news uucp; do
             userdel -r "$users" 2> /dev/null
         done

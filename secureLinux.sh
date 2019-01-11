@@ -427,11 +427,12 @@ secure_connections(){
     fi
 
     ## Insecure protocols - need if statement
+    ## * Test four last protocols
     read -p "Would you like to remove insecure protocols (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
         echo "Removing insecure protocols"
-        sudo apt-get --purge remove xinetd nis yp-tools tftpd atftpd tftpd-hpa telnetd rsh-server rsh-redone-server
+        sudo apt-get --purge remove xinetd nis yp-tools tftpd atftpd tftpd-hpa telnetd rsh-server rsh-redone-server dccp sctip rds tipc
     fi
 
     ## psad - need to 'noemail' with context

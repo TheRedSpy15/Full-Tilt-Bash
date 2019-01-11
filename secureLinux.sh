@@ -113,6 +113,22 @@ secure_system(){
             fi
         fi
     fi
+    
+    ## misc file systems
+    ## * needs testing
+    read -p "Would you like to disable misc file systems (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        echo "[$SCRIPT_COUNT] Disabling misc file systems"
+
+        local FS
+        FS="cramfs freevxfs jffs2 hfs hfsplus squashfs udf vfat"
+        for disable in $FS; do
+            if ! grep -q "$disable" "$DISABLEFS" 2> /dev/null; then
+                echo "install $disable /bin/true" >> "$DISABLEFS"
+            fi
+        done
+    fi
 
     ## ctrl alt del
     read -p "Would you like to disable ctrl + alt + del (y/n)?" CONT

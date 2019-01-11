@@ -754,7 +754,7 @@ secure_ssh(){
 }
 
 secure_user(){
-    echo "${PUR}*** Securing user ***${NC}"
+    echo "${PUR}*** Securing users ***${NC}"
 
     ## Maximum password age - no need for if statement
     read -p "Would you like to limit password age to 100 days for root (y/n)?" CONT
@@ -762,6 +762,15 @@ secure_user(){
     then
         echo "Setting maximum password age of root (100 days)"
         chage -M 100 -W 90 root
+    fi
+    
+    ## useless users
+    read -p "Would you like to remove insecure users (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        for users in games gnats irc list news uucp; do
+            userdel -r "$users" 2> /dev/null
+        done
     fi
 }
 

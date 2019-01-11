@@ -46,7 +46,7 @@ update(){
     read -p "Would you like to configure apt-get sources (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
-    echo "configuring apt-get sources"
+    echo "Configuring apt-get sources"
     
         if ! grep '^APT::Get::AllowUnauthenticated' /etc/apt/apt.conf.d/* ; then
             echo 'APT::Get::AllowUnauthenticated "false";' >> /etc/apt/apt.conf.d/01-vendor-ubuntu
@@ -650,33 +650,106 @@ secure_ssh(){
             echo "SSH port already changed from default"
         fi
     fi
-
-    ## X11Forwarding
-    read -p "Would you like to disable X11Forwarding (y/n)?" CONT
+    
+    ## Config
+    ## * needs testing
+    read -p "Would you like to securely configure SSH (y/n)?" CONT
     if [ "$CONT" = "y" ];
     then
         sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
-    fi
-
-    ## TCPKeepAlive
-    read -p "Would you like to disable TCPKeepAlive (y/n)?" CONT
-    if [ "$CONT" = "y" ];
-    then
         sed -i 's/TCPKeepAlive yes/TCPKeepAlive no/g' /etc/ssh/sshd_config
-    fi
-
-    ## AllowTcpForwarding
-    read -p "Would you like to disable AllowTcpForwarding (y/n)?" CONT
-    if [ "$CONT" = "y" ];
-    then
         sed -i 's/AllowTcpForwarding yes/AllowTcpForwarding no/g' /etc/ssh/sshd_config
-    fi
-
-    ## AllowAgentForwarding
-    read -p "Would you like to disable AllowAgentForwarding (y/n)?" CONT
-    if [ "$CONT" = "y" ];
-    then
         sed -i 's/AllowAgentForwarding yes/AllowAgentForwarding no/g' /etc/ssh/sshd_config
+        sed -i '/HostKey.*ssh_host_dsa_key.*/d' /etc/ssh/sshd_config
+        sed -i '/KeyRegenerationInterval.*/d' /etc/ssh/sshd_config
+        sed -i '/ServerKeyBits.*/d' /etc/ssh/sshd_config
+        sed -i '/UseLogin.*/d' /etc/ssh/sshd_config
+        sed -i 's/.*LoginGraceTime.*/LoginGraceTime 20/' /etc/ssh/sshd_config
+        sed -i 's/.*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+        sed -i 's/.*UsePrivilegeSeparation.*/UsePrivilegeSeparation sandbox/' /etc/ssh/sshd_config
+        sed -i 's/.*LogLevel.*/LogLevel VERBOSE/' /etc/ssh/sshd_config
+        sed -i 's/.*Banner.*/Banner \/etc\/issue.net/' /etc/ssh/sshd_config"
+        sed -i 's/.*Subsystem.*sftp.*/Subsystem sftp \/usr\/lib\/openssh\/sftp-server -f AUTHPRIV -l INFO/' /etc/ssh/sshd_config
+        sed -i 's/^#.*Compression.*/Compression no/' /etc/ssh/sshd_config
+        
+        echo "" >> /etc/ssh/sshd_config
+        if ! grep -q "^PrintLastLog" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "PrintLastLog yes" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^IgnoreUserKnownHosts" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "IgnoreUserKnownHosts yes" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^PermitEmptyPasswords" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "PermitEmptyPasswords no" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^AllowGroups" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "AllowGroups $SSH_GRPS" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^MaxAuthTries" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "MaxAuthTries 2" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/MaxAuthTries.*/MaxAuthTries 2/' /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^ClientAliveInterval" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "ClientAliveInterval 300" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^ClientAliveCountMax" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^PermitUserEnvironment" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "PermitUserEnvironment no" >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^KexAlgorithms" /etc/ssh/sshd_config 2> /dev/null; then
+            echo 'KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256' >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^Ciphers" /etc/ssh/sshd_config" 2> /dev/null; then
+            echo 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^Macs" /etc/ssh/sshd_config 2> /dev/null; then
+            echo 'Macs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256' >> /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^MaxSessions" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "MaxSessions 2" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/MaxSessions.*/MaxSessions 2/' /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^UseDNS" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "UseDNS no" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/UseDNS.*/UseDNS no/' /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^StrictModes" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "StrictModes yes" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/StrictModes.*/StrictModes yes/' /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^MaxStartups" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "MaxStartups 10:30:60" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/MaxStartups.*/MaxStartups 10:30:60/' /etc/ssh/sshd_config
+        fi
+
+        if ! grep -q "^HostbasedAuthentication" /etc/ssh/sshd_config 2> /dev/null; then
+            echo "HostbasedAuthentication no" >> /etc/ssh/sshd_config
+        else
+            sed -i 's/HostbasedAuthentication.*/HostbasedAuthentication no/' /etc/ssh/sshd_config
+        fi
+        
+        systemctl restart sshd.service
     fi
 }
 

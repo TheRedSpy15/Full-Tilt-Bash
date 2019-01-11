@@ -124,13 +124,25 @@ update(){
     fi
 }
 
-## Root/sudo check
-## * secureLinux.sh: 79: [: -ne: unexpected operator
-sudo_check(){
+## critical pre checks
+prechecks(){
+    ## sudo check
     if [ $EUID -ne 0 ];
     then
-        echo "Must be root to run script"
+        echo "Must be root to run script" ## * secureLinux.sh: 79: [: -ne: unexpected operator
         exit
+    fi
+    
+    # Bash check
+    if ! ps -p $$ | grep -si bash; then
+        echo "Sorry, this script requires bash."
+        exit 1
+    fi
+    
+    ## Ubuntu check
+    if ! lsb_release -i | grep 'Ubuntu'; then
+        echo "Ubuntu only. Exiting."
+        exit 1
     fi
 }
 
@@ -680,7 +692,7 @@ secure_user(){
     fi
 }
 
-sudo_check
+prechecks
 update_script
 update_templates
 update

@@ -40,6 +40,50 @@ update_script(){
 
 update(){
     echo "${PUR}*** Updating system ***${NC}"
+    
+    ## apt-get sources
+    ## * needs testing
+    read -p "Would you like to configure apt-get sources (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+    echo "configuring apt-get sources"
+    
+        if ! grep '^APT::Get::AllowUnauthenticated' /etc/apt/apt.conf.d/* ; then
+            echo 'APT::Get::AllowUnauthenticated "false";' >> /etc/apt/apt.conf.d/01-vendor-ubuntu
+        else
+            sed -i 's/.*APT::Get::AllowUnauthenticated.*/APT::Get::AllowUnauthenticated "false";/g' "$(grep -l 'APT::Get::AllowUnauthenticated' /etc/apt/apt.conf.d/*)"
+        fi
+
+        if ! grep '^APT::Periodic::AutocleanInterval "7";' /etc/apt/apt.conf.d/*; then
+            echo 'APT::Periodic::AutocleanInterval "7";' >> /etc/apt/apt.conf.d/10periodic
+        else
+            sed -i 's/.*APT::Periodic::AutocleanInterval.*/APT::Periodic::AutocleanInterval "7";/g' "$(grep -l 'APT::Periodic::AutocleanInterval' /etc/apt/apt.conf.d/*)"
+        fi
+
+        if ! grep '^APT::Install-Recommends' /etc/apt/apt.conf.d/*; then
+            echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf.d/01-vendor-ubuntu
+        else
+            sed -i 's/.*APT::Install-Recommends.*/APT::Install-Recommends "false";/g' "$(grep -l 'APT::Install-Recommends' /etc/apt/apt.conf.d/*)"
+        fi
+
+        if ! grep '^APT::Get::AutomaticRemove' /etc/apt/apt.conf.d/*; then
+            echo 'APT::Get::AutomaticRemove "true";' >> /etc/apt/apt.conf.d/01-vendor-ubuntu
+        else
+            sed -i 's/.*APT::Get::AutomaticRemove.*/APT::Get::AutomaticRemove "true";/g' "$(grep -l 'APT::Get::AutomaticRemove' /etc/apt/apt.conf.d/*)"
+        fi
+
+        if ! grep '^APT::Install-Suggests' /etc/apt/apt.conf.d/*; then
+            echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/01-vendor-ubuntu
+        else
+            sed -i 's/.*APT::Install-Suggests.*/APT::Install-Suggests "false";/g' "$(grep -l 'APT::Install-Suggests' /etc/apt/apt.conf.d/*)"
+        fi
+
+        if ! grep '^Unattended-Upgrade::Remove-Unused-Dependencies' /etc/apt/apt.conf.d/*; then
+            echo 'Unattended-Upgrade::Remove-Unused-Dependencies "true";' >> /etc/apt/apt.conf.d/50unattended-upgrades
+        else
+            sed -i 's/.*Unattended-Upgrade::Remove-Unused-Dependencies.*/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' "$(grep -l 'Unattended-Upgrade::Remove-Unused-Dependencies' /etc/apt/apt.conf.d/*)"
+        fi
+    fi
 
     ## Full system update
     read -p "Would you like to completely update now (y/n)?" CONT

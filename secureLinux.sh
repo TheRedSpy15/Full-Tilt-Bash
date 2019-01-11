@@ -615,7 +615,7 @@ secure_user(){
     if [ "$CONT" = "y" ];
     then
         echo "Setting maximum password age of root (100 days)"
-        chage -M 100 root
+        chage -M 100 -W 90 root
     fi
 }
 

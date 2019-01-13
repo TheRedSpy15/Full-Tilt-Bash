@@ -133,12 +133,6 @@ prechecks(){
         exit
     fi
     
-    # Bash check
-    if ! ps -p $$ | grep -si bash; then
-        echo "Sorry, this script requires bash."
-        exit 1
-    fi
-    
     ## Ubuntu check
     if ! lsb_release -i | grep 'Ubuntu'; then
         echo "Ubuntu only. Exiting."
@@ -148,6 +142,14 @@ prechecks(){
 
 secure_system(){
     echo "${PUR}*** Securing system ***${NC}"
+
+    ## Isolate firefox
+    ## TODO: check for app armor-utils
+    read -p "Would you like to isolate firefox (y/n)?" CONT
+    if [ "$CONT" = "y" ];
+    then
+        sudo aa-enforce /etc/apparmor.d/usr.bin.firefox
+    fi
 
     ## Homebrew - need check for homebrew
     ## TODO: only run if homebrew is installed
@@ -168,22 +170,6 @@ secure_system(){
                 sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
             fi
         fi
-    fi
-    
-    ## misc file systems
-    ## * needs testing
-    read -p "Would you like to disable misc file systems (y/n)?" CONT
-    if [ "$CONT" = "y" ];
-    then
-        echo "[$SCRIPT_COUNT] Disabling misc file systems"
-
-        local FS
-        FS="cramfs freevxfs jffs2 hfs hfsplus squashfs udf vfat"
-        for disable in $FS; do
-            if ! grep -q "$disable" "$DISABLEFS" 2> /dev/null; then
-                echo "install $disable /bin/true" >> "$DISABLEFS"
-            fi
-        done
     fi
 
     ## ctrl alt del
@@ -670,7 +656,7 @@ secure_ssh(){
         sed -i 's/.*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
         sed -i 's/.*UsePrivilegeSeparation.*/UsePrivilegeSeparation sandbox/' /etc/ssh/sshd_config
         sed -i 's/.*LogLevel.*/LogLevel VERBOSE/' /etc/ssh/sshd_config
-        sed -i 's/.*Banner.*/Banner \/etc\/issue.net/' /etc/ssh/sshd_config"
+        sed -i 's/.*Banner.*/Banner \/etc\/issue.net/' /etc/ssh/sshd_config
         sed -i 's/.*Subsystem.*sftp.*/Subsystem sftp \/usr\/lib\/openssh\/sftp-server -f AUTHPRIV -l INFO/' /etc/ssh/sshd_config
         sed -i 's/^#.*Compression.*/Compression no/' /etc/ssh/sshd_config
         
@@ -713,7 +699,7 @@ secure_ssh(){
             echo 'KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256' >> /etc/ssh/sshd_config
         fi
 
-        if ! grep -q "^Ciphers" /etc/ssh/sshd_config" 2> /dev/null; then
+        if ! grep -q "^Ciphers" /etc/ssh/sshd_config 2> /dev/null; then
             echo 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
         fi
 
